@@ -87,14 +87,7 @@ class KasirController extends Controller
         $produk = tb_produk::where('id', $request['id'])
             ->firstOrFail();
 
-        // \Cart::session(auth()->id())->clear();
-        // dd(\Cart::session(auth()->id())->getContent());
-        // \Cart::session($userID)->remove($request['id']);
 
-        // dd(\Cart::session($userID)->getContent());
-        // dd($produk['nama_produk']);
-
-        // dd('delete');
 
         if ($produk !== NULL) {
 
