@@ -101,6 +101,8 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
+
+                                {{-- {{ dd($produk) }} --}}
                                 @foreach ($produk as $item=>$prod)
                                     <div class="col-xl-6 col-sm-6 box-col-4a">
                                         <div class="card bg-dark">
@@ -344,6 +346,8 @@
         methods: {
             addId: function (){
                 var id = event.target.getAttribute('data-id')
+
+                // console.log(id)
                 axios.post('{{ url("kasir/transaksi/cart") }}', { id: id, })
                 .then(response=> {
                     this.getData()
@@ -434,7 +438,7 @@
             addTransaksi: function(){
                 // var id = this.getJumlah()
                 var id = event.target.getAttribute('data-id')
-                // console.log(id)
+                console.log(id)
                 axios.post('{{ url("kasir/transaksi/addtransaksi") }}', {jumlah: id})
                 .then(response=>{
                     if(response.data.status == 200){

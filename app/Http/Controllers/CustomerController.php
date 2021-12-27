@@ -84,9 +84,15 @@ class CustomerController extends Controller
     {
         //
 
-        $data = tb_kategori::where('id_customer', Auth::user()->id_customer)
+        $data = DB::table('tb_kategori')
+            ->join('tb_toko', 'tb_kategori.id_toko', 'tb_toko.id')
+            ->where('tb_kategori.id_customer', Auth::user()->id_customer)
             ->get();
-        return view('customer.kategori.index', compact(['data']));
+
+        $toko = DB::table('tb_toko')->where('id_customer', Auth::user()->id_customer)
+            ->get();
+
+        return view('customer.kategori.index', compact(['data', 'toko']));
     }
 
     public function postKategori(Request $request)
@@ -105,6 +111,7 @@ class CustomerController extends Controller
             // dd(Auth::user());
             $new = tb_kategori::create([
                 'id_customer' => Auth::user()->id_customer,
+                'id_toko' => $request['id_toko'],
                 'nama_kategori' => $request['nama_kategori'],
                 'created_at' => Carbon::now()
             ]);
@@ -197,17 +204,18 @@ class CustomerController extends Controller
                 $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
                 $file->move('./uploads/foto_produk/', $fileName);
 
-                $data = tb_produk::create([
-                    'id_kategori' => $request['id_kategori'],
-                    'id_toko' => $request['id_toko'],
-                    'id_customer' => Auth::user()->id_customer,
-                    'nama_produk' => $request['nama_produk'],
-                    'deskripsi_produk' => $request['deskripsi_produk'],
-                    'stok' => $request['stok'],
-                    'harga' => $request['harga'],
-                    'foto' => $fileName,
-                    'created_at' => Carbon::now()
-                ]);
+                $data = DB::table('tb_produk')
+                    ->insert([
+                        'id_kategori' => $request['id_kategori'],
+                        'id_toko' => $request['id_toko'],
+                        'id_customer' => Auth::user()->id_customer,
+                        'nama_produk' => $request['nama_produk'],
+                        'deskripsi_produk' => $request['deskripsi_produk'],
+                        'stok' => $request['stok'],
+                        'harga' => $request['harga'],
+                        'foto' => $fileName,
+                        'created_at' => Carbon::now()
+                    ]);
                 return back()->with('success', 'Berhasil menambahkan Data');
             } else {
                 return redirect()->back()->with('error', 'Gagal menambahkan data baru');
@@ -274,7 +282,9 @@ class CustomerController extends Controller
     {
         //
         $data = tb_kasir::where('id_customer', Auth::user()->id_customer)->get();
-        return view('customer.kasir.index', compact(['data']));
+
+        $toko = DB::table('tb_toko')->where('id_customer', Auth::user()->id_customer)->get();
+        return view('customer.kasir.index', compact(['data', 'toko']));
     }
 
     public function postKasir(Request $request)
@@ -296,6 +306,7 @@ class CustomerController extends Controller
                 $id_kasir = tb_kasir::insertGetId([
                     'id_customer' => Auth::user()->id_customer,
                     'nama_kasir' => $request['nama_kasir'],
+                    'id_toko' => $request['id_toko'],
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ]);

@@ -6,6 +6,7 @@ use App\Models\tb_customer;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,6 +22,8 @@ class FrontController extends Controller
     public function postDaftar(Request $request)
     {
         $data = $request->all();
+
+        // dd($data);
 
         $rule = [
             'nama_customer' => 'required',
@@ -38,24 +41,31 @@ class FrontController extends Controller
             if ($request['password'] == $request['re-password']) {
                 // dd('true');
 
-                $cust_id = tb_customer::insertGetId([
+                $cust_id = DB::table('tb_customer')
+                ->insertGetId([
                     'nama_customer' => $request['nama_customer'],
                     'subscription_status' => 0,
                     'status_login' => 0,
-                    'created_at' => Carbon::now()
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
                 ]);
 
                 // dd($cust_id);
+                if ($cust_id) {
+                    # code...
+                    $data = User::create([
+                        'name' => $request['nama_customer'],
+                        'id_customers' => $cust_id,
+                        'email' => $request['email'],
+                        'password' => Hash::make($request['password']),
+                        'roles' => 1,
+                        'created_at' => Carbon::now()
+                    ]);
+                    return redirect('login')->with('success', 'Berhasil Mendaftar, Silakan Login !!!');
+                }else{
+                    return back()->with('error', 'Gagal Mendapatkan ID User');
+                }
 
-                $data = User::create([
-                    'name' => $request['nama_customer'],
-                    'id_customers' => $cust_id,
-                    'email' => $request['email'],
-                    'password' => Hash::make($request['password']),
-                    'roles' => 1,
-                    'created_at' => Carbon::now()
-                ]);
-                return redirect('login');
             } else {
                 // dd('false');
 

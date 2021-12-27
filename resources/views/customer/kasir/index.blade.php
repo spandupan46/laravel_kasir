@@ -179,6 +179,23 @@
                         <input type="password" class="form-control" name="re-password" placeholder="Password">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label>Toko</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                            <i class="fa fa-key"></i>
+                            </div>
+                        </div>
+                        <select name="id_toko" class="form-control" id="">
+                            <option value="">== Pilih Toko ==</option>
+                            @foreach ($toko as $item=>$tk)
+                                <option value="{{ $tk->id }}">{{ $tk->nama_toko }}</option>
+                            @endforeach
+                        </select>
+                        {{-- <input type="password" class="form-control" name="re-password" placeholder="Password"> --}}
+                    </div>
+                </div>
                <button type="submit" class="btn btn-primary m-t-15 waves-effect">Save</button>
             </form>
         </div>

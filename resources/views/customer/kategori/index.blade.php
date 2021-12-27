@@ -42,6 +42,7 @@
                         <tr>
                             <th width="10%">No</th>
                             <th>Nama Kategori</th>
+                            <th>Nama Toko</th>
                             <th width="5%">Aksi</th>
                         </tr>
                     </thead>
@@ -50,6 +51,7 @@
                             <tr>
                                 <td>{{ $item+1 }}</td>
                                 <td>{{ $var->nama_kategori }}</td>
+                                <td>{{ $var->nama_toko }}</td>
                                 <td>
                                     {{-- <a href="{{ url('customer/kategori/'.$var->id.'/kasir') }}" title="Detail User Kasir"><i class="fa fa-eye"></i></a> --}}
                                     <a data-toggle="modal" href="#edit-{{ $var->id }}" title="lihat file"><i class="fa fa-pencil"></i></a>
@@ -144,6 +146,22 @@
                             </div>
                         </div>
                         <input type="text" class="form-control" name="nama_kategori" placeholder="Nama Kategori">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Toko</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                            <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <select name="id_toko" class="form-control">
+                            <option value="">== Pilih Toko ==</option>
+                            @foreach ($toko as $item=>$tk)
+                                <option value="{{ $tk->id }}">{{ $tk->nama_toko }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                <button type="submit" class="btn btn-primary m-t-15 waves-effect">Save</button>
