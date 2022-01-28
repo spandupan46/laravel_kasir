@@ -28,6 +28,7 @@ class FrontController extends Controller
         $rule = [
             'nama_customer' => 'required',
             'email' => 'email|required',
+            'no_telpon'=>'required|numeric',
             'password' => 'required',
         ];
         // dd($data);
@@ -38,39 +39,67 @@ class FrontController extends Controller
             return back()->with('error', 'Pastikan Semua Field terisi');
         } else {
 
-            if ($request['password'] == $request['re-password']) {
-                // dd('true');
+            // cek email di db 
+            
+            $email = DB::table('users')->where('email', $request['email'])
+            ->get();
 
-                $cust_id = DB::table('tb_customer')
-                ->insertGetId([
-                    'nama_customer' => $request['nama_customer'],
-                    'subscription_status' => 0,
-                    'status_login' => 0,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
-
-                // dd($cust_id);
-                if ($cust_id) {
-                    # code...
-                    $data = User::create([
-                        'name' => $request['nama_customer'],
-                        'id_customers' => $cust_id,
-                        'email' => $request['email'],
-                        'password' => Hash::make($request['password']),
-                        'roles' => 1,
-                        'created_at' => Carbon::now()
+            if ($email->isEmpty()) {
+                # code...
+                if ($request['password'] == $request['re-password']) {
+                    // dd('true');
+    
+                    $cust_id = DB::table('tb_customer')
+                    ->insertGetId([
+                        'nama_customer' => $request['nama_customer'],
+                        // 'subscription_status' => 0,
+                        // 'status_login' => 0,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
                     ]);
-                    return redirect('login')->with('success', 'Berhasil Mendaftar, Silakan Login !!!');
-                }else{
-                    return back()->with('error', 'Gagal Mendapatkan ID User');
+    
+                    // dd($cust_id);
+                    if ($cust_id) {
+                        # code...
+                        $data = User::create([
+                            'name' => $request['nama_customer'],
+                            'id_customer' => $cust_id,
+                            'email' => $request['email'],
+                            'password' => Hash::make($request['password']),
+                            'roles' => 1,
+                            'created_at' => Carbon::now()
+                        ]);
+
+                        if ($data) {
+                            # code...
+                            $carbon = Carbon::now();
+                            DB::table('transaksi_langganan')->insert([
+                                'id_customer'=> $cust_id,
+                                'id_produk' => 1,
+                                'status_langganan' => 'gratis',
+                                'mulai_langganan' => Carbon::now(),
+                                'akhir_langganan' => $carbon->addDays(7),
+                                'created_at' => Carbon::now(),
+                                'updated_at' => Carbon::now(),
+                            ]);
+                            return redirect('login')->with('success', 'Berhasil Mendaftar, Silakan Login !!!');
+                        }else{
+                            return back()->with('error', 'Gagal Mendaftar Free Produk. Silahkan Hubungi Operator');
+                        }
+
+                    }else{
+                        return back()->with('error', 'Gagal Mendapatkan ID User');
+                    }
+    
+                } else {
+                    // dd('false');
+    
+                    return back()->with('error', 'Password harus sama !!!');
                 }
-
-            } else {
-                // dd('false');
-
-                return back()->with('error', 'Password harus sama !!!');
+            }else{
+                return back()->with('error', 'Email Telah Terdaftar');
             }
+
         }
         // dd($data);
     }

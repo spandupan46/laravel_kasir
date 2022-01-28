@@ -18,4 +18,14 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+    
+
+    # Forbid non-secure POSTs
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{REQUEST_METHOD} =POST
+    RewriteRule ^ / [F,L]
+
+    # Force SSL
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>

@@ -122,7 +122,9 @@
                                 </div>
                                 <div class="form-group">
                                     <input class="form-control" name="email" type="email" placeholder="Masukkan Email kamu">
-                                    {{-- <small class="text-danger float-left">* Pastikan email aktif</small> --}}
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" name="no_telpon" type="number" placeholder="Contoh 08128xxxxxx">
                                 </div>
                                 <div class="form-group">
                                     <input class="form-control" name="password" type="password" placeholder="Password">

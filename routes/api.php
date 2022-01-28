@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\TripayCallbackController;
+use App\Http\Controllers\TripayController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,3 +25,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/data', function () {
     return 'ok';
 });
+// Route::middleware('auth:api')->('status_tripay', [TripayCallbackController::class, 'handle']);
+
+// Route::post('/status_tripay', [TripayCallbackController::class, 'handle']);
+
+// Route::post('/status_tripay', [TripayCallbackController::class, 'handle']);
+Route::post('/CodeTransaksi', [TripayController::class, 'AmbilKodeTransaksi']);
+

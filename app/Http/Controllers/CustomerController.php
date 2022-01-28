@@ -48,12 +48,46 @@ class CustomerController extends Controller
         if ($validator->fails()) {
             return back()->with('error', 'Gagal Menambahkan Data');
         } else {
-            $data = tb_toko::create([
-                'id_customer' => Auth::user()->id_customer,
-                'nama_toko' => $request['nama_toko'],
-                'created_at' => Carbon::now()
-            ]);
-            return back()->with('success', 'Berhasil menambahkan toko baru');
+            // cek langganan
+            $langganan = DB::table('transaksi_langganan')
+                ->join('tb_produk_pelanggan', 'transaksi_langganan.id_produk', 'tb_produk_pelanggan.id')
+                ->where('id_customer', Auth::user()->id_customer)
+                ->whereNotIn('status_langganan', ['tidak_langganan'])
+                ->first();
+
+                $count = DB::table('tb_toko')->where('id_customer', Auth::user()->id_customer)
+                ->count('id');
+
+                if ($langganan->status_langganan == 'gratis') {
+                    # code...
+                    // dd();
+                    if ($count < 1) {
+                        tb_toko::create([
+                            'id_customer' => Auth::user()->id_customer,
+                            'nama_toko' => $request['nama_toko'],
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ]);
+                        return back()->with('success', 'Berhasil menambahkan toko baru');
+                    }else{
+                        return back()->with('error', 'Melebihi batas maksimum pembuatan toko. silahkan upgrade akun anda');
+                    }
+                }else if ($langganan->status_langganan == 'langganan') {
+                    # code...
+                    if ($count < $langganan->maks_toko) {
+                        tb_toko::create([
+                            'id_customer' => Auth::user()->id_customer,
+                            'nama_toko' => $request['nama_toko'],
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ]);
+                            return back()->with('success', 'Berhasil menambahkan toko baru');
+                        }else{
+                            return back()->with('error', 'Melebihi batas maksimum pembuatan toko. silahkan upgrade akun anda');
+                        }
+                }else{
+                    return back()->with('error', 'Silahkan Berlangganan Terlebih Dahulu');
+                }
         }
     }
 
@@ -300,27 +334,78 @@ class CustomerController extends Controller
         if ($validator->fails()) {
             return back()->with('error', 'Semua field harus diisi');
         } else {
-            if ($request['password'] !== $request['re-password']) {
-                return back()->with('error', 'Password Tidak Sama !!!');
-            } else {
-                $id_kasir = tb_kasir::insertGetId([
-                    'id_customer' => Auth::user()->id_customer,
-                    'nama_kasir' => $request['nama_kasir'],
-                    'id_toko' => $request['id_toko'],
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
-                ]);
 
-                User::create([
-                    'name' => $request['nama_kasir'],
-                    'email' => $request['email'],
-                    'id_kasir' => $id_kasir,
-                    'password' => Hash::make($request['password']),
-                    'roles' => 2,
-                    'created_at' => Carbon::now()
-                ]);
+            $langganan = DB::table('transaksi_langganan')
+                ->join('tb_produk_pelanggan', 'transaksi_langganan.id_produk', 'tb_produk_pelanggan.id')
+                ->where('id_customer', Auth::user()->id_customer)
+                ->whereNotIn('status_langganan', ['tidak_langganan'])
+                ->first();
 
-                return back()->with('success', 'Berhasil menambahkan data kasir');
+            $count = DB::table('tb_kasir')->where('id_customer', Auth::user()->id_customer)
+                ->count('id');
+
+            if ($langganan->status_langganan == 'gratis') {
+                # code...
+
+                if ($count < 1) {
+                    # code...
+                    if ($request['password'] !== $request['re-password']) {
+                        return back()->with('error', 'Password Tidak Sama !!!');
+                    } else {
+                        $id_kasir = tb_kasir::insertGetId([
+                            'id_customer' => Auth::user()->id_customer,
+                            'nama_kasir' => $request['nama_kasir'],
+                            'id_toko' => $request['id_toko'],
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now()
+                        ]);
+        
+                        User::create([
+                            'name' => $request['nama_kasir'],
+                            'email' => $request['email'],
+                            'id_kasir' => $id_kasir,
+                            'password' => Hash::make($request['password']),
+                            'roles' => 2,
+                            'created_at' => Carbon::now()
+                        ]);
+        
+                        return back()->with('success', 'Berhasil menambahkan data kasir');
+                    }
+                }else{
+                    return back()->with('error', 'Melebihi batas maksimum pembuatan kasir. silahkan upgrade akun anda');
+                }
+            }elseif ($langganan->status_langganan == 'langganan') {
+                # code...
+
+                if ($count < $langganan->maks_kasir) {
+                    # code...
+                    if ($request['password'] !== $request['re-password']) {
+                        return back()->with('error', 'Password Tidak Sama !!!');
+                    } else {
+                        $id_kasir = tb_kasir::insertGetId([
+                            'id_customer' => Auth::user()->id_customer,
+                            'nama_kasir' => $request['nama_kasir'],
+                            'id_toko' => $request['id_toko'],
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now()
+                        ]);
+        
+                        User::create([
+                            'name' => $request['nama_kasir'],
+                            'email' => $request['email'],
+                            'id_kasir' => $id_kasir,
+                            'password' => Hash::make($request['password']),
+                            'roles' => 2,
+                            'created_at' => Carbon::now()
+                        ]);
+        
+                        return back()->with('success', 'Berhasil menambahkan data kasir');
+                    }
+                }else{
+                    return back()->with('error', 'Melebihi batas maksimum pembuatan kasir. silahkan upgrade akun anda');
+                }
+            }else{
+                return back()->with('error', 'Silahkan Anda Berlangganan Terlebih Dahulu');
             }
         }
     }
@@ -334,5 +419,27 @@ class CustomerController extends Controller
             ->delete();
 
         return back()->with('success', 'Berhasil menghapus data kasir');
+    }
+
+
+
+    public function indexharga()
+    {
+        $data = DB::table('tb_produk_pelanggan')
+        ->whereNotIn('harga',[0])
+        ->get();
+        
+        return view('customer.harga.index', compact(['data']));
+    }
+
+    public function transaksi_pelanggan()
+    {
+        $data = DB::table('tb_transaksi_pelanggan')
+        ->join('tb_produk_pelanggan', 'tb_transaksi_pelanggan.id_Produk_pelanggan', 'tb_produk_pelanggan.id')
+        ->select('tb_transaksi_pelanggan.*', 'tb_produk_pelanggan.nama_produk')
+        ->where('customer_email', Auth::user()->email)
+        ->get();
+        
+        return view('customer.transaksi.langganan', compact(['data']));
     }
 }

@@ -76,5 +76,18 @@
             @yield('content')
         </main>
     </div>
+
+    <script src="{{ asset('assets/js/jquery-3.5.1.min.js') }}"></script>
+
+    <script src="{{ asset('assets/js/sweetalert.min.js') }}"></script>
+    @if (\Session::has('success'))
+        <script>
+            swal("Success!", "{!! \Session::get('success') !!}", "success");
+        </script>
+    @elseif(\Session::has('error'))
+        <script>
+            swal("Error !", "{!! \Session::get('error') !!}", "error");
+        </script>
+    @endif
 </body>
 </html>
