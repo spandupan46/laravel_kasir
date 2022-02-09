@@ -101,6 +101,8 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
+
+                                {{-- {{ dd($produk) }} --}}
                                 @foreach ($produk as $item=>$prod)
                                     <div class="col-xl-6 col-sm-6 box-col-4a">
                                         <div class="card bg-dark">
@@ -211,38 +213,6 @@
                                           </tbody>
                                         </table>
                                       </div>
-                                    {{-- <div class="user-status cart-table table-responsive">
-                                        <table class="table table-bordernone">
-                                            <thead>
-                                                <tr class="text-center">
-                                                    <th scope="col">Produk</th>
-                                                    <th scope="col">Jumlah</th>
-                                                    <th scope="col">Harga</th>
-                                                    <th scope="col">Total Harga</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="prod_list in produk_list" class="text-center">
-                                                    <td class="f-w-600">@{{ prod_list.name }}</td>
-                                                    <td class="d-inline-flex">
-                                                        <div class=""><button style="border: none; border-radius: 10px" @click.prevent="minesCart()" :data-id="prod_list.id" > - </button></div>
-                                                        <div class="" style="width: 30px; text-align: center">@{{ prod_list.quantity }}</div>
-                                                        <div class=""><button style="border: none; border-radius: 10px" @click.prevent="plusCart()" :data-id="prod_list.id"  > + </button></div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="span badge badge-pill pill-badge-secondary">@{{ prod_list.price }}</div>
-                                                    </td>
-                                                    <td class="font-primary"><button class="badge badge-danger" @click.prevent="deleteCart()" :data-id="prod_list.id">@{{ (prod_list.quantity*prod_list.price) }}</button></td>
-                                                </tr>
-                                            </tbody>
-                                            <tfoot>
-                                                <tr class="text-center">
-                                                    <td colspan="3">Jumlah</td>
-                                                    <td>@{{ harga_total }}</td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div> --}}
                                     <div class="code-box-copy">
                                         <button class="code-box-copy__btn btn-clipboard" data-clipboard-target="#example-head1" title="Copy"><i class="icofont icofont-copy-alt"></i></button>
                                     </div>
@@ -344,6 +314,8 @@
         methods: {
             addId: function (){
                 var id = event.target.getAttribute('data-id')
+
+                // console.log(id)
                 axios.post('{{ url("kasir/transaksi/cart") }}', { id: id, })
                 .then(response=> {
                     this.getData()

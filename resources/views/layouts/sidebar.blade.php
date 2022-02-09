@@ -23,28 +23,35 @@
 
         @if (Auth::user()->roles !=  2)
         <li><a class="bar-icons" href="javascript:void(0)"><i class="pe-7s-portfolio"></i><span>Master Data</span></a>
-          <ul class="iconbar-mainmenu custom-scrollbar">
-            <li class="iconbar-header">Master Data</li>
-            @if (Auth::user()->roles == 0)
-                <li>
-                    <a class="nav-link" href="{{ url('admin/customer') }}">Master Customer</a>
-                </li>
-            @endif
-            @if (Auth::user()->roles == 1)
-                <li>
-                    <a class="nav-link" href="{{ url('customer/toko') }}">Master Toko</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ url('customer/kategori') }}">Master Kategori</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ url('customer/produk') }}">Master Produk</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ url('customer/kasir') }}">Master Kasir</a>
-                </li>
-            @endif
-        </ul>
+            <ul class="iconbar-mainmenu custom-scrollbar">
+                <li class="iconbar-header">Master Data</li>
+                @if (Auth::user()->roles == 0)
+                    <li>
+                        <a class="nav-link" href="{{ url('admin/produk_pelanggan') }}">Master Produk</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{{ url('admin/customer') }}">Master Customer</a>
+                    </li>
+                @endif
+                @if (Auth::user()->roles == 1)
+                    <li>
+                        <a class="nav-link" href="{{ url('customer/toko') }}">Master Toko</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{{ url('customer/kategori') }}">Master Kategori</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{{ url('customer/produk') }}">Master Produk</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{{ url('customer/kasir') }}">Master Kasir</a>
+                    </li>
+                @endif
+            </ul>
+        </li>
+        @endif
+        @if (Auth::user()->roles == 1)
+        <li><a class="bar-icons" href="{{ url('customer/harga') }}"><i class="pe-7s-server"></i><span>Apps</span></a></li>
         @endif
 
 
@@ -57,6 +64,9 @@
                   </li>
               @endif
               @if (Auth::user()->roles == 1)
+                  <li>
+                      <a class="nav-link" href="{{ url('customer/transaksi_langganan') }}">Transaksi Langganan</a>
+                  </li>
                   <li>
                       <a class="nav-link" href="{{ url('customer/pemasukan') }}">Transaksi Pemasukan</a>
                   </li>

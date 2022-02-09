@@ -5,6 +5,9 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\ProdukPelanggan;
+use App\Http\Controllers\TripayCallbackController;
+use App\Http\Controllers\TripayController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +42,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'auth.admin']], func
     Route::prefix('/customer')->group(function () {
         Route::get('/', [AdminController::class, 'indexCustomer']);
     });
+
+    Route::prefix('/produk_pelanggan')->group(function(){
+        Route::get('/', [ProdukPelanggan::class, 'index']);
+        Route::get('/{id}/detail', [ProdukPelanggan::class, 'detailProdukPelanggan']);
+        Route::post('/', [ProdukPelanggan::class, 'postProdukPelanggan']);
+
+        Route::post('/deskripsi_produk', [ProdukPelanggan::class, 'postDeskripsiProduk']);
+    });
 });
 
 Route::group(['prefix' => 'customer', 'middleware' => ['auth', 'auth.customer']], function () {
@@ -70,6 +81,12 @@ Route::group(['prefix' => 'customer', 'middleware' => ['auth', 'auth.customer']]
         Route::post('/delete', [CustomerController::class, 'deleteProduk']);
     });
 
+    Route::prefix('/harga')->group(function(){
+        Route::get('/', [CustomerController::class, 'indexharga']);
+
+        Route::get('{id_produk}/bayar',[TripayController::class, 'indexBayar']);
+    });
+
     Route::prefix('kasir')->group(function () {
         Route::get('/', [CustomerController::class, 'indexKasir']);
         Route::post('/', [CustomerController::class, 'postKasir']);
@@ -81,6 +98,10 @@ Route::group(['prefix' => 'customer', 'middleware' => ['auth', 'auth.customer']]
     });
     Route::prefix('pengeluaran')->group(function () {
         Route::get('/', [CustomerController::class, 'indexPemasukan']);
+    });
+
+    Route::prefix('transaksi_langganan')->group(function(){
+        Route::get('/', [CustomerController::class, 'transaksi_pelanggan']);
     });
 });
 Route::group(['prefix' => 'kasir', 'middleware' => ['auth', 'auth.kasir']], function () {
@@ -102,4 +123,14 @@ Route::group(['prefix' => 'kasir', 'middleware' => ['auth', 'auth.kasir']], func
     Route::prefix('riwayat_transaksi')->group(function () {
         Route::get('/', [KasirController::class, 'riwayatTransaksi']);
     });
+});
+
+Route::get('/channel', [TripayController::class, 'Channel_pembayaran']);
+Route::get('/test_daftar', [TripayController::class, 'bayarTransaksi']);
+
+
+
+Route::post('status_tripay', [TripayCallbackController::class, 'handle']);
+Route::get('redirect', function(){
+    return view('customer.redirect');
 });

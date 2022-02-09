@@ -59,6 +59,7 @@ class KasirController extends Controller
 
         $kasir = DB::table('tb_kasir')->where('id', Auth::user()->id_kasir)->get();
 
+
         // dd(\Cart::session(auth()->id())->getContent());
 
         // dd($kasir[0]->id_toko);
@@ -71,10 +72,11 @@ class KasirController extends Controller
             $produk = DB::table('tb_produk')
                 ->join('tb_kategori', 'tb_produk.id_kategori', 'tb_kategori.id')
                 // ->join('users', 't')
-                // ->where('tb_produk.id_customer', Auth::user()->id_customer)
-                ->where('tb_produk.id_toko', $kasir[0]->id_toko)
+                ->where('tb_produk.id_customer', $kasir[0]->id_customer)
+                // ->where('tb_produk.id_toko', $kasir[0]->id_toko)
                 ->select('tb_produk.*', 'tb_kategori.nama_kategori')
                 ->paginate(4);
+                // ->get();
 
             // dd($produk);
             return view('kasir.transaksi.index', compact(['produk']));
